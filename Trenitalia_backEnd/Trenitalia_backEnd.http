@@ -1,0 +1,6 @@
+@Trenitalia_backEnd_HostAddress = http://localhost:5195
+
+GET {{Trenitalia_backEnd_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
