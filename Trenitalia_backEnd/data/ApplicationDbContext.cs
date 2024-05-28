@@ -18,5 +18,9 @@ namespace Trenitalia_backEnd.data
 		public DbSet<Stazioni> Stazioni { get; set; }
 		public DbSet<StazioniInPercorso> StazioniInPercorso { get; set; }
 		public DbSet<Treni> Treni { get; set; }
+
+		public DbSet<News> News { get; set; }
+
+		public DbSet<ImgsCaroselloMain> ImgsCaroselloMain { get; set; }
 	}
 }
