@@ -13,6 +13,14 @@ namespace Trenitalia_backEnd.Models
 		[Required]
 		public string Cognome { get; set; }
 
+
+		public string NomeUtente
+		{
+
+			get { return $"{Nome}-{Cognome}{new Random().Next()}"; }
+			set { }
+		}
+
 		[Required]
 		public string CodiceFiscale { get; set; }
 
