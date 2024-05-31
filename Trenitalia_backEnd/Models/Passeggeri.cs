@@ -16,8 +16,13 @@ namespace Trenitalia_backEnd.Models
 
 		public string NomeUtente
 		{
+			get { return $"{Nome}-{Cognome}{new Random().Next(10, 10000)}"; }
+			set { }
+		}
 
-			get { return $"{Nome}-{Cognome}{new Random().Next()}"; }
+		public string Password
+		{
+			get { return $"{new Random().Next(100000, 200000)}"; }
 			set { }
 		}
 
@@ -35,6 +40,8 @@ namespace Trenitalia_backEnd.Models
 
 		[Required]
 		public string Cellulare { get; set; }
+
+		public string Ruolo { get; set; } = "Utente";
 
 		public virtual ICollection<Prenotazioni> Prenotazioni { get; set; }
 	}
