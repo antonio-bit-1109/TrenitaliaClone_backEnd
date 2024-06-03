@@ -10,5 +10,16 @@
 		public string email { get; set; }
 		public string nome { get; set; }
 		public string sesso { get; set; }
+
+		public bool aderisciCartaFreccia { get; set; }
+		public bool aderisciXGo { get; set; }
+		public bool giveConsenso1 { get; set; }
+		public bool giveConsenso2 { get; set; }
+		public bool giveConsenso3 { get; set; }
+		public bool mancanzaCodiceFiscale { get; set; }
+
+
+
+
 	}
 }

@@ -4,6 +4,12 @@ namespace Trenitalia_backEnd.Models
 {
 	public class Passeggeri
 	{
+
+		//public Passeggeri()
+		//{
+
+		//}
+
 		[Key]
 		public int IdPasseggero { get; set; }
 
@@ -13,18 +19,9 @@ namespace Trenitalia_backEnd.Models
 		[Required]
 		public string Cognome { get; set; }
 
+		public string NomeUtente { get; set; }
 
-		public string NomeUtente
-		{
-			get { return $"{Nome}-{Cognome}{new Random().Next(10, 10000)}"; }
-			set { }
-		}
-
-		public string Password
-		{
-			get { return $"{new Random().Next(100000, 200000)}"; }
-			set { }
-		}
+		public string Password { get; set; }
 
 		[Required]
 		public string CodiceFiscale { get; set; }
@@ -42,6 +39,16 @@ namespace Trenitalia_backEnd.Models
 		public string Cellulare { get; set; }
 
 		public string Ruolo { get; set; } = "Utente";
+
+		public bool AderisciCartaFreccia { get; set; }
+
+		public bool AderisciXGo { get; set; }
+
+		public bool GiveConsenso1 { get; set; }
+		public bool GiveConsenso2 { get; set; }
+		public bool GiveConsenso3 { get; set; }
+
+		public bool MancanzaCodiceFiscale { get; set; }
 
 		public virtual ICollection<Prenotazioni> Prenotazioni { get; set; }
 	}

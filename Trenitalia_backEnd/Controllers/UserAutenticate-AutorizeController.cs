@@ -28,18 +28,30 @@ namespace Trenitalia_backEnd.Controllers
 		[HttpPost("PostDatiRegistrazione")]
 		public async Task<IActionResult> postUtente(PostUtenteDTO datiUtente)
 		{
+			if (datiUtente.codiceFiscale != null && datiUtente.mancanzaCodiceFiscale == true)
+			{
+				return BadRequest();
+			}
+
 			if (ModelState.IsValid)
 			{
 
 				var Passeggero = new Passeggeri
 				{
-					Nome = datiUtente.nome,
-					Cognome = datiUtente.cognome,
-					CodiceFiscale = datiUtente.codiceFiscale,
-					Email = datiUtente.email,
+					Nome = (datiUtente.nome).ToLower(),
+					Cognome = datiUtente.cognome.ToLower(),
+					CodiceFiscale = datiUtente.codiceFiscale.ToLower(),
+					Email = datiUtente.email.ToLower(),
 					DataNascita = Convert.ToDateTime(datiUtente.dataNascita),
-					Sesso = datiUtente.sesso,
-					Cellulare = datiUtente.cellulare
+					Sesso = datiUtente.sesso.ToLower(),
+					Cellulare = datiUtente.cellulare.ToLower(),
+					AderisciCartaFreccia = datiUtente.aderisciCartaFreccia,
+					AderisciXGo = datiUtente.aderisciXGo,
+					GiveConsenso1 = datiUtente.giveConsenso1,
+					GiveConsenso2 = datiUtente.giveConsenso2,
+					GiveConsenso3 = datiUtente.giveConsenso3,
+					NomeUtente = $"{datiUtente.nome.ToLower()}-{datiUtente.cognome.ToLower()}{new Random().Next(10, 10000)}",
+					Password = $"{new Random().Next(100000, 200000)}",
 				};
 
 				var UtenteEsistente = await _db.Passeggeri.FirstOrDefaultAsync(x => x.CodiceFiscale == datiUtente.codiceFiscale && (x.DataNascita) == Convert.ToDateTime(datiUtente.dataNascita));
@@ -64,6 +76,8 @@ namespace Trenitalia_backEnd.Controllers
 					$" CF : {Passeggero.CodiceFiscale} <br>" +
 					$" EMAIL : {Passeggero.Email} <br>" +
 					$" DATA NASCITA : {Passeggero.DataNascita} <br>" +
+					$" ADERISCI CARTA FRECCIA : {(Passeggero.AderisciCartaFreccia == true ? "SI" : "NO")} <br>" +
+					$" ADERISCI XGO : {(Passeggero.AderisciXGo == true ? "SI" : "NO")} <br>" +
 					$"------------------------------------------------------- <br>" +
 					$"------------------------------------------------------- <br>" +
 					$" CREDENZIALI PER L'ACCESSO : <br>" +
@@ -105,7 +119,7 @@ namespace Trenitalia_backEnd.Controllers
 
 		private async Task<Passeggeri> Autenticate(LoginUserDTO userDataLogin)
 		{
-			var utente = await _db.Passeggeri.FirstOrDefaultAsync(x => x.NomeUtente == userDataLogin.nomeUtente && x.Password == userDataLogin.password);
+			var utente = await _db.Passeggeri.FirstOrDefaultAsync(x => x.NomeUtente == userDataLogin.nomeUtente.Trim() && x.Password == userDataLogin.password.Trim());
 
 			if (utente == null)
 			{
@@ -124,7 +138,8 @@ namespace Trenitalia_backEnd.Controllers
 					Sesso = utente.Sesso,
 					Cellulare = utente.Cellulare,
 					Password = utente.Password,
-					Ruolo = utente.Ruolo
+					Ruolo = utente.Ruolo,
+					NomeUtente = utente.NomeUtente
 				};
 			}
 
@@ -136,12 +151,19 @@ namespace Trenitalia_backEnd.Controllers
 			{
 				new Claim(JwtRegisteredClaimNames.Jti, Convert.ToString( user.IdPasseggero)),
 				new Claim(JwtRegisteredClaimNames.Name, user.Nome),
-				new Claim(ClaimTypes.Role, user.Ruolo),
+				new Claim(JwtRegisteredClaimNames.Sub, user.Cognome),
+				new Claim(JwtRegisteredClaimNames.UniqueName, user.NomeUtente),
+				new Claim(JwtRegisteredClaimNames.Acr, user.Ruolo),
 				new Claim(JwtRegisteredClaimNames.Email, user.Email),
-
 			};
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+			if (key == null)
+			{
+				return null;
+			}
+
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 			var token = new JwtSecurityToken(
